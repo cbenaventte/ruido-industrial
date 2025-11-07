@@ -1,0 +1,73 @@
+# Configuración de Sensores Acústicos
+# Cada sensor representa un punto de medición en la planta industrial
+
+sensors:
+  - sensor_id: SENSOR_001
+    zona: Sala_Compresores
+    descripcion: Sala de compresores principales
+    profile: compresor
+    location:
+      lat: -33.4489
+      lon: -70.6693
+      floor: 1
+      building: Edificio A
+    baseline_db: 88.0
+    alert_threshold: 90.0
+    calibration_date: "2024-01-15"
+    is_active: true
+    
+  - sensor_id: SENSOR_002
+    zona: Zona_Soldadura
+    descripcion: Área de soldadura industrial
+    profile: soldadura
+    location:
+      lat: -33.4490
+      lon: -70.6695
+      floor: 1
+      building: Edificio A
+    baseline_db: 82.0
+    alert_threshold: 87.0
+    calibration_date: "2024-01-15"
+    is_active: true
+    
+  - sensor_id: SENSOR_003
+    zona: Prensas_Hidraulicas
+    descripcion: Zona de prensas hidráulicas
+    profile: prensa
+    location:
+      lat: -33.4488
+      lon: -70.6690
+      floor: 1
+      building: Edificio B
+    baseline_db: 91.0
+    alert_threshold: 93.0
+    calibration_date: "2024-01-15"
+    is_active: true
+    
+  - sensor_id: SENSOR_004
+    zona: Area_Ensamble
+    descripcion: Área de ensamblaje manual
+    profile: ensamble
+    location:
+      lat: -33.4492
+      lon: -70.6688
+      floor: 2
+      building: Edificio A
+    baseline_db: 75.0
+    alert_threshold: 83.0
+    calibration_date: "2024-01-15"
+    is_active: true
+    
+  - sensor_id: SENSOR_005
+    zona: Molienda_Metales
+    descripcion: Sección de molienda de metales
+    profile: molienda
+    location:
+      lat: -33.4487
+      lon: -70.6692
+      floor: 1
+      building: Edificio B
+    baseline_db: 95.0
+    alert_threshold: 97.0
+    calibration_date: "2024-01-15"
+    is_active: true

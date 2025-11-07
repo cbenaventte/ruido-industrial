@@ -1,0 +1,62 @@
+# Límites según Decreto Supremo 594 (Chile)
+# Ministerio de Salud - Reglamento sobre Condiciones Sanitarias
+
+ds594_limits:
+  # Exposición continua según tiempo
+  exposure_limits:
+    - level_db: 85
+      duration_hours: 8
+      description: "Límite para jornada de 8 horas"
+      
+    - level_db: 88
+      duration_hours: 4
+      description: "Límite para 4 horas de exposición"
+      
+    - level_db: 91
+      duration_hours: 2
+      description: "Límite para 2 horas de exposición"
+      
+    - level_db: 94
+      duration_hours: 1
+      description: "Límite para 1 hora de exposición"
+      
+    - level_db: 97
+      duration_hours: 0.5
+      description: "Límite para 30 minutos de exposición"
+      
+    - level_db: 100
+      duration_hours: 0.25
+      description: "Límite para 15 minutos de exposición"
+      
+    - level_db: 103
+      duration_hours: 0.125
+      description: "Límite para 7.5 minutos de exposición"
+  
+  # Límites absolutos
+  absolute_limits:
+    peak_max: 140
+    peak_description: "Nivel peak máximo permitido (dB(C))"
+    
+    action_level: 82
+    action_description: "Nivel de acción preventiva (dB(A))"
+    
+  # Factor de intercambio (incremento de dB que duplica/reduce tiempo)
+  exchange_rate: 3
+  
+  # Dosis de ruido permitida
+  dose_limit: 100
+  dose_description: "Dosis máxima permitida (%)"
+  
+  # Medidas de control requeridas
+  control_measures:
+    - threshold: 82
+      action: "Evaluación y programa de vigilancia"
+      
+    - threshold: 85
+      action: "Protección auditiva obligatoria"
+      
+    - threshold: 90
+      action: "Controles de ingeniería obligatorios"
+      
+    - threshold: 95
+      action: "Reducción de tiempo de exposición"
