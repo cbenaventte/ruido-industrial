@@ -14,15 +14,12 @@
 ## 📸 Screenshots
 
 ### Dashboard Principal - Grafana
-![Dashboard Principal](docs/images/dashboard-principal.png)
+![Dashboard Principal](docs/images/panel-Grafana.png.png)
 *Monitoreo en tiempo real de 5 sensores acústicos con alertas automáticas*
 
-### Análisis de Cumplimiento DS 594
-![Cumplimiento](docs/images/cumplimiento-ds594.png)
-*Tracking de violaciones normativas y dosis de ruido*
 
 ### Pipeline de Datos
-![Pipeline](docs/images/pipeline-arquitectura.png)
+![Pipeline](docs/images/Arquitectura del Sistema.drawio.png)
 *Arquitectura completa: Kafka → Processing → Storage → Visualization*
 
 ---
