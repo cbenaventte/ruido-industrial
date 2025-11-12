@@ -14,15 +14,14 @@
 ## 📸 Screenshots
 
 ### Dashboard Principal - Grafana
-![Dashboard Principal](docs/images/panel-Grafana.png.png)
+![Dashboard Principal](docs/images/panel-Grafana.png)
 *Monitoreo en tiempo real de 5 sensores acústicos con alertas automáticas*
 
 
 ### Pipeline de Datos
-![Pipeline](docs/images/Arquitectura del Sistema.drawio.png)
+![Pipeline](docs/images/ArquitecturaSistema.png)
 *Arquitectura completa: Kafka → Processing → Storage → Visualization*
 
----
 
 ## 🎯 Características Principales
 
