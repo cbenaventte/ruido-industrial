@@ -168,7 +168,7 @@ El sistema utiliza **PostgreSQL 17** con arquitectura de 3 schemas:
 | **Message Broker** | Apache Kafka 3.5 | Streaming de eventos en tiempo real |
 | **Stream Processing** | Python 3.10+ | Procesamiento y transformación de datos |
 | **Time-Series DB** | InfluxDB 2.7 | Almacenamiento de métricas temporales |
-| **Relational DB** | PostgreSQL 15 | Alertas, configuración y reportes |
+| **Relational DB** | PostgreSQL 17 | Alertas, configuración y reportes |
 | **Monitoring** | Grafana 10.2 | Dashboards y visualización 24/7 |
 | **ML Library** | scikit-learn | Detección de anomalías (Isolation Forest) |
 | **Orchestration** | Docker Compose | Gestión de contenedores |
@@ -178,7 +178,7 @@ El sistema utiliza **PostgreSQL 17** con arquitectura de 3 schemas:
 
 ## 🚀 Quick Start
 
-### Prerrequisitos
+### Prerequisitos
 
 ```bash
 # Software requerido:
@@ -455,7 +455,7 @@ Este proyecto está bajo la Licencia MIT. Ver archivo [LICENSE](LICENSE) para m�
 **Carlos Benavente**
 - LinkedIn: [cbenaventte](https://www.linkedin.com/in/cbenaventte)
 - GitHub: [@cbenaventte](https://github.com/cbenaventte)
-- Email: cbenaventtel@egmail.com.com
+- Email: cbenaventte@gmail.com
 - Portfolio: [Mi_portafolio](https://cbenaventte.github.io/portfolio-datos/)
 
 ---
