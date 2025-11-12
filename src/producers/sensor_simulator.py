@@ -36,11 +36,11 @@ class AcousticSimulator:
     
     # Configuración de sensores en planta industrial
     SENSORS = [
-        SensorConfig('SENSOR_001', 'Sala_Compresores', 83, 3.5, -33.4489, -70.6693),    # Reducido de 88 → 83
-        SensorConfig('SENSOR_002', 'Zona_Soldadura', 78, 4.0, -33.4490, -70.6695),      # Reducido de 82 → 78
-        SensorConfig('SENSOR_003', 'Prensas_Hidraulicas', 85, 5.0, -33.4488, -70.6690), # Reducido de 91 → 84
-        SensorConfig('SENSOR_004', 'Area_Ensamble', 72, 2.5, -33.4492, -70.6688),       # Reducido de 75 → 72
-        SensorConfig('SENSOR_005', 'Molienda_Metales', 89, 6.0, -33.4487, -70.6692),    # Reducido de 95 → 86
+        SensorConfig('SENSOR_001', 'Sala_Compresores', 83, 2.5, -33.4489, -70.6693),    # Reducido de 88 → 83
+        SensorConfig('SENSOR_002', 'Zona_Soldadura', 78, 3.0, -33.4490, -70.6695),      # Reducido de 82 → 78
+        SensorConfig('SENSOR_003', 'Prensas_Hidraulicas', 84, 3.5, -33.4488, -70.6690), # Reducido de 91 → 84
+        SensorConfig('SENSOR_004', 'Area_Ensamble', 72, 2.0, -33.4492, -70.6688),       # Reducido de 75 → 72
+        SensorConfig('SENSOR_005', 'Molienda_Metales', 86, 4.0, -33.4487, -70.6692),    # Reducido de 95 → 86
     ]
     
     def __init__(self, kafka_bootstrap_servers: str = 'localhost:9092'):
@@ -103,7 +103,7 @@ class AcousticSimulator:
         # Espectro de frecuencias
         spectrum = self._generate_spectrum(LAeq)
         
-        # Turno laboral
+        # Turno laboralexi
         current_hour = datetime.now().hour
         if 8 <= current_hour < 16:
             turno = 'diurno'
