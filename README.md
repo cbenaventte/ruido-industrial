@@ -14,13 +14,17 @@
 ## 📸 Screenshots
 
 ### Dashboard Principal - Grafana
-![Dashboard Principal](docs/images/panel-Grafana.png)
+![Dashboard Principal](docs/images/panel-Grafana21.png)
 *Monitoreo en tiempo real de 5 sensores acústicos con alertas automáticas*
 
 
-### Pipeline de Datos
-![Pipeline](docs/images/ArquitecturaSistema.png)
-*Arquitectura completa: Kafka → Processing → Storage → Visualization*
+### Stream Processor
+![Procesador en Streaming](docs/images/Terminal2-consumer.png)
+*Stream processor 100% funcional – cálculos DS 594 en tiempo real*
+
+
+![Análisis Exploratorio](docs/images/notebook_analysis.png)
+*Notebook profesional con análisis completo y validación normativa*
 
 
 ## 🎯 Características Principales
@@ -55,65 +59,8 @@
 
 ## 🏗️ Arquitectura del Sistema
 
-```
-┌────────────────────────────────────────────────────────────┐
-│                     CAPA DE INGESTA                        │
-│                                                            │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │  Sensor 001  │  │  Sensor 002  │  │  Sensor 00N  │      │
-│  │  88 dB(A)    │  │  82 dB(A)    │  │  91 dB(A)    │      │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
-│         └──────────────────┴────────────────┘              │
-│                            │                               │
-│                    ┌───────▼────────┐                      │
-│                    │  Apache Kafka  │                      │
-│                    │  Topic: raw    │                      │
-│                    └───────┬────────┘                      │
-└────────────────────────────┼───────────────────────────────┘
-                             │
-┌────────────────────────────┼──────────────────────────────┐
-│                CAPA DE PROCESAMIENTO                      │
-│                                                           │
-│                    ┌───────▼────────┐                     │
-│                    │   Python       │                     │
-│                    │   Processor    │                     │
-│                    └───────┬────────┘                     │
-│                            │                              │
-│         ┌──────────────────┼─────────────────┐            │
-│         │                  │                 │            │
-│  ┌──────▼──────┐  ┌────────▼────────┐  ┌─────▼─────┐      │
-│  │ DS594 Calc  │  │ ML Detector     │  │ Alerting  │      │
-│  │ (LAeq, dose)│  │ (Isolation      │  │ Engine    │      │
-│  └──────┬──────┘  │  Forest)        │  └─────┬─────┘      │
-│         │         └────────┬────────┘        │            │
-└─────────┼───────────────────┼─────────────────┼───────────┘
-          │                   │                 │
-┌─────────┼───────────────────┼─────────────────┼────────────┐
-│                 CAPA DE ALMACENAMIENTO                     │
-│                                                            │
-│  ┌──────▼──────────┐      ┌────▼─────────┐                 │
-│  │   InfluxDB      │      │ PostgreSQL   │                 │
-│  │  (Time-Series)  │      │ (Relational) │                 │
-│  │                 │      │              │                 │
-│  │ • LAeq history  │      │ • Alerts     │                 │
-│  │ • Metrics       │      │ • Config     │                 │
-│  │ • Sensors data  │      │ • Reports    │                 │
-│  └──────┬──────────┘      └────┬─────────┘                 │
-└─────────┼──────────────────────┼───────────────────────────┘
-          │                      │
-┌─────────┼──────────────────────┼────────────┐
-│              CAPA DE VISUALIZACIÓN          │
-│                                             │
-│  ┌──────▼──────────┐      ┌────▼─────────┐  │
-│  │    Grafana      │      │  Streamlit   │  │
-│  │   (Monitoring)  │      │  (Analytics) │  │
-│  │                 │      │              │  │
-│  │ • Real-time     │      │ • Reports    │  │
-│  │ • Dashboards    │      │ • Analysis   │  │
-│  │ • Alerts        │      │ • Exports    │  │
-│  └─────────────────┘      └──────────────┘  │
-└─────────────────────────────────────────────┘
-```
+![Pipeline](docs/images/ArquitecturaSistema.png)
+*Arquitectura completa: Kafka → Processing → Storage → Visualization*
 ---
 
 ## 🗄️ Esquema de Base de Datos
@@ -181,11 +128,17 @@ El sistema utiliza **PostgreSQL 17** con arquitectura de 3 schemas:
 ### Prerequisitos
 
 ```bash
-# Software requerido:
-- Docker Desktop 20+
-- Python 3.10+
-- 4GB RAM disponible
-- 5GB espacio en disco
+# Software
+- Python 3.9+
+- Docker & Docker Compose
+- PostgreSQL 15+
+- Apache Kafka 3.0+
+- InfluxDB 2.0+
+
+# Hardware recomendado
+- CPU: 4+ cores
+- RAM: 8+ GB
+- Disco: 50+ GB SSD
 ```
 
 ### Instalación en 3 Pasos
@@ -195,23 +148,52 @@ El sistema utiliza **PostgreSQL 17** con arquitectura de 3 schemas:
 git clone https://github.com/tu-usuario/ruido-industrial.git
 cd ruido-industrial
 
-# 2. Levantar infraestructura
+# 2. Instalar Dependencias Python
+# Crear entorno virtual
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+
+# 3. Levantar infraestructura
 docker-compose up -d
 
-# 3. Ejecutar pipeline (2 terminales)
+# Verificar que todos los servicios estén UP
+docker-compose ps
+
+# 4. Ejecutar pipeline (2 terminales)
 # Terminal 1:
 python src/producers/sensor_simulator.py
 
 # Terminal 2:
 python src/consumers/stream_processor.py
+
+# Terminal 3: Jupyter Notebook (análisis exploratorio)
+jupyter notebook notebooks/exploratory_analysis.ipynb
 ```
 
 ### Acceso a Dashboards
 
 ```
-📊 Grafana:  http://localhost:3000 (admin/admin)
-📈 InfluxDB: http://localhost:8086 (admin/adminpassword123)
-🔌 Kafka UI: http://localhost:8080
+📊 Grafana:     http://localhost:3000 
+   Usuario:     admin
+   Password:    admin
+
+📈 InfluxDB UI: http://localhost:8086
+   Usuario:     admin
+   Password:    adminpassword123
+   Org:         ruido-industrial
+   Bucket:      acoustic-data
+
+🔌 Kafka UI:    http://localhost:8080 (si configurado)
+
+💾 PostgreSQL:  localhost:5432
+   Database:    ruido_db
+   User:        ruido_user
+   Password:    ruido_password
 ```
 
 ---
@@ -225,7 +207,7 @@ python src/consumers/stream_processor.py
 - **Escalabilidad**: Probado con 5 sensores, preparado para 100+
 
 ### Datos Generados
-- **Métricas por sensor**: LAeq, LPeak, L10, L50, L90, espectro (7 bandas)
+- **Métricas por sensor**: LAeq, LPeak,dose_8h, lex8h, L10, L50, L90, espectro
 - **Frecuencia**: Mediciones cada 5 segundos
 - **Retención**: 30 días en InfluxDB, alertas permanentes en PostgreSQL
 - **Volumen**: ~25 MB/día (5 sensores)
@@ -302,31 +284,89 @@ python scripts/health_check.py
 ## 📚 Documentación Detallada
 
 - **[Arquitectura del Sistema](docs/ARCHITECTURE.md)**: Diseño técnico completo
-- **[Arquitectura de Datos](docs/DATABASE_SCHEMA.md.md)**: Documentación completa
+- **[Arquitectura de Datos](docs/DATABASE_SCHEMA.md)**: Documentación completa
 - **[Guía de Instalación](docs/SETUP.md)**: Setup paso a paso
 - **[API Documentation](docs/api/README.md)**: Endpoints y schemas
-- **[Normativa DS 594](docs/DS594.md)**: Referencia legal completa
+- **[Fundamentos Acústicos](docs/Fundamentos.md)**: Referencia legal completa
 
 ---
 
 ## 🎓 Casos de Uso
 
-### 1. Monitoreo Continuo 24/7
-Vigilancia en tiempo real de niveles de ruido en planta industrial con alertas automáticas.
+### 1. Monitoreo Continuo 24/7 ⭐
+**Objetivo**: Vigilancia en tiempo real con alertas automáticas.
 
-### 2. Cumplimiento Normativo
-Generación automática de reportes de cumplimiento DS 594 para auditorías de SEREMI.
+**Flujo**:
+```
+Sensor detecta 89 dB
+  → Kafka (50ms)
+  → Procesador calcula dosis proyectada: 110%
+  → Genera alerta CRÍTICA
+  → PostgreSQL + Dashboard Grafana
+  → Notificación al supervisor
+  → Acción: Rotación inmediata de personal
+```
 
-### 3. Mantenimiento Predictivo
-Detección temprana de deterioro de equipos mediante análisis de cambios en el patrón acústico.
+**Resultado**: Prevención de exposición excesiva en tiempo real.
+
+### 2. Cumplimiento Legal para Auditorías ⭐
+**Objetivo**: Evidencia objetiva para SEREMI de Salud.
+
+**Entregables**:
+- Reportes diarios de dosis por zona (PostgreSQL: `reporting.daily_reports`)
+- Lex,8h promedio mensual
+- Historial de violaciones con acciones correctivas (tabla `alerts` con campo `actions`)
+- Certificados de calibración (tabla `sensors`, campo `last_calibration`)
+
+**Beneficio**: Cumple Art. 75 DS 594, evita multas.
+
+### 3. Mantenimiento Predictivo ⭐
+**Objetivo**: Detectar fallas antes de que ocurran.
+
+**Ejemplo Real**:
+```
+Compresor con rodamiento desgastado:
+  • LAeq normal: 86 dB → Anómalo: 92 dB (+6 dB)
+  • Espectro: Pico en 4 kHz (frecuencia típica de rodamientos)
+  • ML: Anomalía detectada (confidence: HIGH, score: -0.8)
+  • Alerta: "Investigar fuente - Posible fallo mecánico"
+  • Mantenimiento inspecciona → Confirma rodamiento defectuoso
+```
+
+**ROI**: Evita parada no programada + reduce ruido en fuente.
 
 ### 4. Optimización de Turnos
-Análisis de exposición por turno para redistribuir trabajadores y minimizar riesgo auditivo.
+**Objetivo**: Redistribuir trabajadores para minimizar exposición.
 
-### 5. Evaluación de Controles
-Medición de efectividad de controles de ingeniería (encerramiento, amortiguadores).
+**Análisis** (tabla `shift_reports`):
+```sql
+SELECT shift_type, AVG(dose_percent) as avg_dose
+FROM reporting.shift_reports
+WHERE report_date >= CURRENT_DATE - INTERVAL '30 days'
+GROUP BY shift_type;
+
+-- Resultado:
+-- turno_nocturno:    95% promedio  ← CRÍTICO
+-- turno_diurno:      78% promedio
+-- turno_vespertino:  82% promedio
+```
+
+**Acción**: Rotación de personal nocturno cada 4 horas.
+
+### 5. Evaluación de Controles de Ingeniería
+**Objetivo**: Medir efectividad de mejoras acústicas.
+
+**Antes vs Después** (ejemplo: Encerramiento de compresor):
+```
+Antes:  LAeq = 91 dB → Dosis proyectada 8h = 180%
+Después: LAeq = 84 dB → Dosis proyectada 8h = 75%
+
+Reducción: 7 dB (atenuación)
+Beneficio: Cumplimiento DS 594 alcanzado
+```
 
 ---
+
 
 ## 🔧 Configuración Avanzada
 

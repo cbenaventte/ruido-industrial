@@ -1,0 +1,148 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "ds594-oficial-2025",
+    "title": "DS 594 – Monitoreo Acústico Industrial (Oficial)",
+    "tags": ["DS594", "HSE", "Ruido", "Chile", "Oficial"],
+    "timezone": "America/Santiago",
+    "schemaVersion": 38,
+    "version": 12,
+    "refresh": "10s",
+    "panels": [
+      {
+        "type": "stat",
+        "title": "CUMPLIMIENTO GLOBAL DS 594",
+        "gridPos": { "h": 6, "w": 8, "x": 0, "y": 0 },
+        "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+        "targets": [
+          {
+            "rawSql": "SELECT ROUND(100 - (SUM(CASE WHEN current_dose > 100 THEN 1 ELSE 0 END)::float / NULLIF(COUNT(*),0) * 100), 2) AS cumplimiento FROM analytics.dose_tracking WHERE timestamp > NOW() - INTERVAL '24 hours'",
+            "format": "table",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "red", "value": null },
+                { "color": "orange", "value": 90 },
+                { "color": "green", "value": 95 }
+              ]
+            },
+            "mappings": [
+              { "type": 1, "options": { "from": 0, "to": 89.99, "result": { "text": "NO CUMPLE" } } },
+              { "type": 1, "options": { "from": 90, "to": 94.99, "result": { "text": "CUMPLE PARCIAL" } } },
+              { "type": 1, "options": { "from": 95, "to": 100, "result": { "text": "CUMPLE" } } }
+            ]
+          }
+        },
+        "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "valueAndName" }
+      },
+      {
+        "type": "stat",
+        "title": "ALERTAS CRÍTICAS ACTIVAS",
+        "gridPos": { "h": 6, "w": 8, "x": 8, "y": 0 },
+        "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+        "targets": [
+          {
+            "rawSql": "SELECT COUNT(*) FROM monitoring.alerts WHERE severity = 'critical' AND resolved = FALSE",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] }
+          }
+        }
+      },
+      {
+        "type": "timeseries",
+        "title": "Lex,8h por Zona (Últimas 24h)",
+        "gridPos": { "h": 10, "w": 16, "x": 0, "y": 6 },
+        "datasource": { "type": "influxdb", "uid": "${DS_INFLUX}" },
+        "targets": [
+          {
+            "query": "from(bucket: \"acoustic-data\")\n  |> range(start: -24h)\n  |> filter(fn: (r) => r._measurement == \"acoustic_measurements\")\n  |> filter(fn: (r) => r._field == \"lex8h\")\n  |> aggregateWindow(every: 15m, fn: mean)\n  |> group(columns: [\"zona\"])",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "decibel",
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 82 }, { "color": "red", "value": 85 }] }
+          }
+        },
+        "options": { "legend": { "displayMode": "table", "placement": "bottom" } }
+      },
+      {
+        "type": "bargauge",
+        "title": "Dosis Actual por Zona",
+        "gridPos": { "h": 10, "w": 8, "x": 16, "y": 6 },
+        "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+        "targets": [
+          {
+            "rawSql": "SELECT zona, ROUND(current_dose,1) as dosis FROM analytics.dose_tracking dt JOIN config.sensors s ON dt.sensor_id = s.sensor_id WHERE dt.timestamp = (SELECT MAX(timestamp) FROM analytics.dose_tracking WHERE zona = s.zona) GROUP BY zona, current_dose ORDER BY dosis DESC",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 80 }, { "color": "red", "value": 100 }] }
+          }
+        },
+        "options": { "orientation": "horizontal", "displayMode": "basic" }
+      },
+      {
+        "type": "table",
+        "title": "Estado Actual por Sensor",
+        "gridPos": { "h": 12, "w": 24, "x": 0, "y": 16 },
+        "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+        "targets": [
+          {
+            "rawSql": "SELECT s.sensor_id, s.zona, ROUND(dt.current_dose,1) as \"Dosis %\", ROUND(dt.projected_dose,1) as \"Proyectada %\", ROUND(dt.lex8h,1) as \"Lex,8h\", CASE WHEN dt.current_dose > 100 THEN 'EXCEDE' WHEN dt.projected_dose > 100 THEN 'RIESGO' WHEN dt.current_dose > 80 THEN 'MONITOREO' ELSE 'CUMPLE' END as estado FROM analytics.dose_tracking dt JOIN config.sensors s ON dt.sensor_id = s.sensor_id WHERE dt.timestamp = (SELECT MAX(timestamp) FROM analytics.dose_tracking d2 WHERE d2.sensor_id = dt.sensor_id) ORDER BY dt.current_dose DESC",
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          { "id": "organize", "options": { "excludeByName": {}, "renameByName": { "estado": "Estado DS 594" } } }
+        ]
+      },
+      {
+        "type": "table",
+        "title": "Últimas Alertas Críticas",
+        "gridPos": { "h": 10, "w": 12, "x": 0, "y": 28 },
+        "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+        "targets": [
+          {
+            "rawSql": "SELECT timestamp AT TIME ZONE 'America/Santiago' as hora, sensor_id, zona, alert_type, message, actions::text as acciones FROM monitoring.alerts WHERE severity IN ('critical','high') AND timestamp > NOW() - INTERVAL '7 days' ORDER BY timestamp DESC LIMIT 10",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "type": "stat",
+        "title": "Turno Actual",
+        "gridPos": { "h": 5, "w": 12, "x": 12, "y": 28 },
+        "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+        "targets": [
+          {
+            "rawSql": "SELECT CASE WHEN EXTRACT(HOUR FROM NOW()) BETWEEN 8 AND 15 THEN 'Diurno' WHEN EXTRACT(HOUR FROM NOW()) BETWEEN 16 AND 23 THEN 'Vespertino' ELSE 'Nocturno' END as turno",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "blue" } } }
+      }
+    ],
+    "templating": {
+      "list": [
+        { "type": "datasource", "name": "DS_INFLUX", "query": "influxdb", "current": { "text": "InfluxDB", "value": "influxdb" } },
+        { "type": "datasource", "name": "DS_POSTGRES", "query": "postgres", "current": { "text": "PostgreSQL", "value": "postgres" } }
+      ]
+    }
+  },
+  "overwrite": true
+}
